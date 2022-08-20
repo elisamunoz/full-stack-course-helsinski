@@ -1,16 +1,27 @@
 import { useState } from "react";
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>;
-const Statistics = ({ good, neutral, bad, all, average, positive }) => (
-  <>
-    <h2>Statistics</h2>
-    <p>good: {good}</p>
-    <p>neutral: {neutral}</p>
-    <p>bad: {bad}</p>
-    <p>all: {all}</p>
-    <p>average: {average}</p>
-    <p>positive: {positive} %</p>
-  </>
-);
+const Statistics = ({ good, neutral, bad, all, average, positive }) => {
+  if (all === 0) {
+    return (
+      <>
+        <h2>Statistics</h2>
+        <p>No feedback given</p>
+      </>
+    );
+  } else {
+    return (
+      <>
+        <h2>Statistics</h2>
+        <p>good: {good}</p>
+        <p>neutral: {neutral}</p>
+        <p>bad: {bad}</p>
+        <p>all: {all}</p>
+        <p>average: {average}</p>
+        <p>positive: {positive} %</p>
+      </>
+    );
+  }
+};
 
 const App = () => {
   const [good, setGood] = useState(0);
