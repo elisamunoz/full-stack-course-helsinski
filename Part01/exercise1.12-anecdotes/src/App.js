@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 const Button = ({ text, onClick }) => <button onClick={onClick}>{text}</button>;
+const VotesCounter = ({ points = 0 }) => <p>has {points} votes</p>;
 
 const App = () => {
   const anecdotes = [
@@ -12,13 +13,14 @@ const App = () => {
     "Debugging is twice as hard as writing the code in the first place. Therefore, if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it.",
     "Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients."
   ];
-  const randomNumber = () => Math.floor(Math.random() * anecdotes.length);
   const [selected, setSelected] = useState(0);
   const [points, setPoints] = useState([]);
+  const [mostVotedIndex, setMostVotedIndex] = useState(0);
 
+  const randomNumber = () => Math.floor(Math.random() * anecdotes.length);
   const handleRandomNumber = () => setSelected(randomNumber());
   const getVotes = () => {
-    const newPoints = points;
+    const newPoints = [...points];
 
     if (!points[selected]) {
       newPoints[selected] = 1;
@@ -27,15 +29,33 @@ const App = () => {
     }
 
     setPoints(newPoints);
+    calculateMostVotedIndex(newPoints);
+  };
+
+  const calculateMostVotedIndex = newPoints => {
+    let maxIndex = 0;
+    let maxNumber = 0;
+
+    for (let i = 0; i < newPoints.length; i++) {
+      if (newPoints[i] > maxNumber) {
+        maxNumber = newPoints[i];
+        maxIndex = i;
+      }
+    }
+
+    setMostVotedIndex(maxIndex);
   };
 
   return (
     <>
       <h1>Anecdote of the day</h1>
       <div>{anecdotes[selected]}</div>
-      <Button text="next anectote" onClick={handleRandomNumber} />
+      <VotesCounter points={points[selected]} />
       <Button text="vote" onClick={getVotes} />
-      <h2>Anecdote with most votes</h2>
+      <Button text="next anectote" onClick={handleRandomNumber} />
+      <h2>Anecdote with more votes</h2>
+      <p>{anecdotes[mostVotedIndex]}</p>
+      <VotesCounter points={points[mostVotedIndex]} />
     </>
   );
 };
