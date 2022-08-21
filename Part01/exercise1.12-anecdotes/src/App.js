@@ -14,12 +14,28 @@ const App = () => {
   ];
   const randomNumber = () => Math.floor(Math.random() * anecdotes.length);
   const [selected, setSelected] = useState(0);
+  const [points, setPoints] = useState([]);
+
   const handleRandomNumber = () => setSelected(randomNumber());
+  const getVotes = () => {
+    const newPoints = points;
+
+    if (!points[selected]) {
+      newPoints[selected] = 1;
+    } else {
+      newPoints[selected]++;
+    }
+
+    setPoints(newPoints);
+  };
 
   return (
     <>
+      <h1>Anecdote of the day</h1>
       <div>{anecdotes[selected]}</div>
       <Button text="next anectote" onClick={handleRandomNumber} />
+      <Button text="vote" onClick={getVotes} />
+      <h2>Anecdote with most votes</h2>
     </>
   );
 };
