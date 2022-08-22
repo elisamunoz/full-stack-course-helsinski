@@ -1,5 +1,40 @@
 import { useState } from "react";
 
+const Filter = ({ value, onChange }) => (
+  <form>
+    <div>
+      filter shown with
+      <input value={value} onChange={onChange} />
+    </div>
+  </form>
+);
+
+const PersonForm = ({
+  onSubmit,
+  name,
+  number,
+  nameValue,
+  numberValue,
+  onChangeName,
+  onChangeNumber
+}) => (
+  <form onSubmit={onSubmit}>
+    <InputForm text={name} value={nameValue} onChange={onChangeName} />
+    <InputForm text={number} value={numberValue} onChange={onChangeNumber} />
+    <div>
+      <button type="submit">add</button>
+    </div>
+  </form>
+);
+
+const InputForm = ({ value, onChange, text }) => (
+  <div>
+    {text}: <input value={value} onChange={onChange} />
+  </div>
+);
+
+const Persons = ({ myKey, children }) => <li key={myKey}>{children}</li>;
+
 const App = () => {
   const [persons, setPerson] = useState([
     { name: "Arto Hellas", number: "040-123456", id: 1 },
@@ -9,7 +44,7 @@ const App = () => {
   ]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
-  const [filterName, setFilterName] = useState("");
+  const [filter, setFilter] = useState("");
 
   const addPerson = event => {
     event.preventDefault();
@@ -30,49 +65,48 @@ const App = () => {
     }
   };
 
-  const filterPeople = persons.filter(person =>
-    person.name.toLowerCase().includes(filterName.toLowerCase())
+  const filterPeople = persons.filter(
+    person =>
+      person.name.toLowerCase().includes(filter.toLowerCase()) ||
+      person.number.includes(filter)
   );
 
-  const handleFilterName = event => {
-    setFilterName(event.target.value);
+  const handleFilter = event => {
+    setFilter(event.target.value);
   };
 
-  const HandleNewPerson = event => {
+  const handleNewPerson = event => {
     setNewName(event.target.value);
   };
 
-  const HandleNewNumber = event => {
+  const handleNewNumber = event => {
     setNewNumber(event.target.value);
   };
 
   return (
     <div>
       <h1>Phonebook</h1>
-      <form>
-        <div>
-          filter shown with
-          <input value={filterName} onChange={handleFilterName} />
-        </div>
-      </form>
+      <Filter value={filter} onChange={handleFilter} />
+
       <h2>Add a New</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={HandleNewPerson} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={HandleNewNumber} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+
+      <PersonForm
+        onSubmit={addPerson}
+        name="name"
+        number="number"
+        nameValue={newName}
+        numberValue={newNumber}
+        onChangeName={handleNewPerson}
+        onChangeNumber={handleNewNumber}
+      />
+
       <h2>Numbers</h2>
+      {!filterPeople.length && <p>There is not information</p>}
       <ul>
         {filterPeople.map(person => (
-          <li key={person.name}>
+          <Persons key={person.name}>
             {person.name} {person.number}
-          </li>
+          </Persons>
         ))}
       </ul>
     </div>
