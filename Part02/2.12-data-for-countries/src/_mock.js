@@ -368,3 +368,49 @@ export const DATA_CHILE = [
     }
   }
 ];
+
+export const WEATHER_SANTIAGO = [
+  {
+    coord: {
+      lon: -70.67,
+      lat: -33.45
+    },
+    weather: [
+      {
+        id: 721,
+        main: "Haze",
+        description: "haze",
+        icon: "50d"
+      }
+    ],
+    base: "stations",
+    main: {
+      temp: 290.48,
+      feels_like: 289.76,
+      temp_min: 287.75,
+      temp_max: 294.08,
+      pressure: 1018,
+      humidity: 57
+    },
+    visibility: 3000,
+    wind: {
+      speed: 2.06,
+      deg: 10
+    },
+    clouds: {
+      all: 100
+    },
+    dt: 1661357787,
+    sys: {
+      type: 1,
+      id: 8506,
+      country: "CL",
+      sunrise: 1661339449,
+      sunset: 1661379580
+    },
+    timezone: -14400,
+    id: 7648389,
+    name: "Barrio Brazil",
+    cod: 200
+  }
+];

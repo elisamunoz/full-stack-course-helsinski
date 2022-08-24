@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-// import axios from "axios";
-import { DATA_CHILE } from "./_mock";
+import axios from "axios";
+// import { DATA_CHILE } from "./_mock";
 import { CountryInfo, CountryList } from "./components/CountryInfo";
-// import CountryList from "./components/CountryInfo";
 
 const App = () => {
   const [countries, setCountries] = useState([]);
@@ -10,12 +9,12 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const countriesHook = () => {
-    setCountries(DATA_CHILE);
+    // setCountries(DATA_CHILE);
     setIsLoading(false);
-    // axios.get("https://restcountries.com/v3.1/all").then(response => {
-    //   setCountries(response.data);
-    //   setIsLoading(false);
-    // });
+    axios.get("https://restcountries.com/v3.1/all").then(response => {
+      setCountries(response.data);
+      setIsLoading(false);
+    });
   };
   useEffect(countriesHook, []);
 
@@ -74,6 +73,8 @@ const App = () => {
               area={country.area}
               languages={country.languages}
               flag={country.flags.svg}
+              lat={country.latlng[0]}
+              lon={country.latlng[1]}
             />
           ))}
         </div>
