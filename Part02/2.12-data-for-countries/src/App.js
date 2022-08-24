@@ -1,24 +1,8 @@
 import { useState, useEffect } from "react";
 // import axios from "axios";
 import { DATA_CHILE } from "./_mock";
-
-const CountryInfo = ({ name, capital, area, languages = {}, flag }) => (
-  <div>
-    <h1>{name}</h1>
-    <p>Capital: {capital}</p>
-    <p>Area: {area}</p>
-    <p>Languages:</p>
-    <ul>
-      {Object.values(languages).map(lang => (
-        <li key={lang}>{lang}</li>
-      ))}
-    </ul>
-
-    <img src={flag} alt={name} width="100" height="auto" />
-  </div>
-);
-
-const CountryList = ({ name }) => <li>{name}</li>;
+import { CountryInfo, CountryList } from "./components/CountryInfo";
+// import CountryList from "./components/CountryInfo";
 
 const App = () => {
   const [countries, setCountries] = useState([]);
@@ -26,7 +10,7 @@ const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   const countriesHook = () => {
-    setCountries([DATA_CHILE]);
+    setCountries(DATA_CHILE);
     setIsLoading(false);
     // axios.get("https://restcountries.com/v3.1/all").then(response => {
     //   setCountries(response.data);
@@ -49,6 +33,10 @@ const App = () => {
   const MAX_COUNTRIES_ITEMS = 10;
   const countryLength = filterCountry.length;
 
+  const handleSeeCountryClick = country => {
+    setQuery(getCountryName(country));
+  };
+
   return (
     <div>
       <form>
@@ -67,26 +55,27 @@ const App = () => {
       {countryLength > 1 && countryLength <= MAX_COUNTRIES_ITEMS && (
         <ul>
           {filterCountry.map(country => (
-            <CountryList key={country.cca3} name={getCountryName(country)} />
+            <CountryList
+              onClick={() => handleSeeCountryClick(country)}
+              key={country.cca3}
+              name={getCountryName(country)}
+            />
           ))}
         </ul>
       )}
 
       {countryLength === 1 && (
         <div>
-          {filterCountry.map(country => {
-            console.log(country);
-            return (
-              <CountryInfo
-                name={getCountryName(country)}
-                key={country.cca3}
-                capital={country.capital}
-                area={country.area}
-                languages={country.languages}
-                flag={country.flags.svg}
-              />
-            );
-          })}
+          {filterCountry.map(country => (
+            <CountryInfo
+              name={getCountryName(country)}
+              key={country.cca3}
+              capital={country.capital}
+              area={country.area}
+              languages={country.languages}
+              flag={country.flags.svg}
+            />
+          ))}
         </div>
       )}
     </div>
