@@ -71,6 +71,7 @@ const App = () => {
               key={country.cca3}
               capital={country.capital}
               area={country.area}
+              population={country.population}
               languages={country.languages}
               flag={country.flags.svg}
               lat={country.latlng[0]}

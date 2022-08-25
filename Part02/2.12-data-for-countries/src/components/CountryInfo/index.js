@@ -7,13 +7,15 @@ const CountryInfo = ({
   area,
   languages = {},
   flag,
+  population,
   lat,
   lon
 }) => (
   <div>
     <h1>{name}</h1>
     <p>Capital: {capital}</p>
-    <p>Area: {area}</p>
+    <p>Area: {area} km²</p>
+    <p>Population: {population}</p>
     <p>Languages:</p>
     <ul>
       {Object.values(languages).map(lang => (
