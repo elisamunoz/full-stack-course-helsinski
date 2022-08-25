@@ -34,7 +34,11 @@ const InputForm = ({ value, onChange, text }) => (
   </div>
 );
 
-const Persons = ({ myKey, children }) => <li key={myKey}>{children}</li>;
+const Persons = ({ myKey, children, onClick }) => (
+  <li key={myKey}>
+    {children} <button onClick={onClick}>delete</button>
+  </li>
+);
 
 const App = () => {
   const [persons, setPerson] = useState([]);
@@ -42,12 +46,12 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
 
-  const hook = () => {
+  const getAllPeople = () => {
     phonebookService
       .getAll()
       .then(initialPhoneBook => setPerson(initialPhoneBook));
   };
-  useEffect(hook, []);
+  useEffect(getAllPeople, []);
 
   const addPerson = event => {
     event.preventDefault();
@@ -68,6 +72,20 @@ const App = () => {
         setNewNumber("");
       });
     }
+  };
+
+  const deletePerson = id => {
+    const person = persons.find(per => per.id === id);
+
+    phonebookService
+      .deleteEntry(id)
+      .then(response => {
+        getAllPeople();
+        // setPerson(persons.filter(p => p.id !== id));
+      })
+      .catch(error => {
+        alert(`the note '${person?.name}' was already deleted from server`);
+      });
   };
 
   const filterPeople = persons.filter(
@@ -109,7 +127,7 @@ const App = () => {
       {!filterPeople.length && <p>There is not information</p>}
       <ul>
         {filterPeople.map(person => (
-          <Persons key={person.name}>
+          <Persons key={person.name} onClick={() => deletePerson(person.id)}>
             {person.name} {person.number}
           </Persons>
         ))}
