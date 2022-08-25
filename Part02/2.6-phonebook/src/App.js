@@ -53,6 +53,19 @@ const App = () => {
   };
   useEffect(getAllPeople, []);
 
+  const updatePersonNumber = (id, newNumber) => {
+    const person = persons.find(pers => pers.id === id);
+    const newInfo = { ...person, number: newNumber };
+
+    phonebookService.update(id, newInfo).then(response => {
+      getAllPeople();
+    });
+  };
+
+  const resetFields = () => {
+    setNewName("");
+    setNewNumber("");
+  };
   const addPerson = event => {
     event.preventDefault();
 
@@ -61,15 +74,20 @@ const App = () => {
       number: newNumber
     };
 
-    const personName = persons.find(person => person.name === newName);
+    const person = persons.find(p => p.name === newName);
 
-    if (personName) {
-      alert(`${newName} is already added to phonebook`);
+    if (
+      person &&
+      window.confirm(
+        `${person.name} is already added to phonebook, replace the old number with a new one?`
+      )
+    ) {
+      updatePersonNumber(person.id, newNumber);
+      resetFields();
     } else {
       phonebookService.create(personObject).then(returnedPhonebook => {
         setPerson(persons.concat(returnedPhonebook));
-        setNewName("");
-        setNewNumber("");
+        resetFields();
       });
     }
   };
@@ -77,20 +95,22 @@ const App = () => {
   const deletePerson = id => {
     const person = persons.find(per => per.id === id);
 
-    phonebookService
-      .deleteEntry(id)
-      .then(response => {
-        getAllPeople();
-        // setPerson(persons.filter(p => p.id !== id));
-      })
-      .catch(error => {
-        alert(`the note '${person?.name}' was already deleted from server`);
-      });
+    if (window.confirm(`Delete ${person.name}?`)) {
+      phonebookService
+        .deleteEntry(id)
+        .then(response => {
+          getAllPeople();
+          // setPerson(persons.filter(p => p.id !== id));
+        })
+        .catch(error => {
+          alert(`the note '${person?.name}' was already deleted from server`);
+        });
+    }
   };
 
   const filterPeople = persons.filter(
     person =>
-      person.name.toLowerCase().includes(filter.toLowerCase()) ||
+      person?.name?.toLowerCase().includes(filter.toLowerCase()) ||
       person.number.includes(filter)
   );
 
@@ -127,7 +147,7 @@ const App = () => {
       {!filterPeople.length && <p>There is not information</p>}
       <ul>
         {filterPeople.map(person => (
-          <Persons key={person.name} onClick={() => deletePerson(person.id)}>
+          <Persons key={person.id} onClick={() => deletePerson(person.id)}>
             {person.name} {person.number}
           </Persons>
         ))}
