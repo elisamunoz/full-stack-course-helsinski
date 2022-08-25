@@ -61,9 +61,13 @@ const App = () => {
     if (personName) {
       alert(`${newName} is already added to phonebook`);
     } else {
-      setPerson(persons.concat(personObject));
-      setNewName("");
-      setNewNumber("");
+      axios
+        .post("http://localhost:3001/persons", personObject)
+        .then(response => {
+          setPerson(persons.concat(response.data));
+          setNewName("");
+          setNewNumber("");
+        });
     }
   };
 
