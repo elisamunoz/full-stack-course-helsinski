@@ -45,6 +45,8 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [showMessage, setShowMessage] = useState(false);
+  const [message, setMessage] = useState({ text: "", type: "info" });
 
   const getAllPeople = () => {
     phonebookService
@@ -66,6 +68,7 @@ const App = () => {
     setNewName("");
     setNewNumber("");
   };
+
   const addPerson = event => {
     event.preventDefault();
 
@@ -76,18 +79,27 @@ const App = () => {
 
     const person = persons.find(p => p.name === newName);
 
-    if (
-      person &&
-      window.confirm(
-        `${person.name} is already added to phonebook, replace the old number with a new one?`
-      )
-    ) {
-      updatePersonNumber(person.id, newNumber);
-      resetFields();
-    } else {
-      phonebookService.create(personObject).then(returnedPhonebook => {
-        setPerson(persons.concat(returnedPhonebook));
+    if (person) {
+      if (
+        window.confirm(
+          `${person.name} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        updatePersonNumber(person.id, newNumber);
         resetFields();
+      }
+    } else {
+      phonebookService.create(personObject).then(returnedPerson => {
+        setPerson(persons.concat(returnedPerson));
+        setShowMessage(true);
+        setMessage({
+          text: `${returnedPerson.name} was added to phonebook`,
+          type: "info"
+        });
+        resetFields();
+        setTimeout(() => {
+          setShowMessage(false);
+        }, 5000);
       });
     }
   };
@@ -103,7 +115,14 @@ const App = () => {
           // setPerson(persons.filter(p => p.id !== id));
         })
         .catch(error => {
-          alert(`the note '${person?.name}' was already deleted from server`);
+          setShowMessage(true);
+          setMessage({
+            text: `${person?.name} was already deleted from server`,
+            type: "error"
+          });
+          setTimeout(() => {
+            setShowMessage(false);
+          }, 5000);
         });
     }
   };
@@ -128,6 +147,9 @@ const App = () => {
 
   return (
     <div>
+      {showMessage && (
+        <div className={`message ${message.type}`}>{message.text}</div>
+      )}
       <h1>Phonebook</h1>
       <Filter value={filter} onChange={handleFilter} />
 
